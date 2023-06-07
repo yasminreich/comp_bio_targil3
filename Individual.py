@@ -1,40 +1,69 @@
 import numpy as np
 
 class NN:
-    def __init__(self,numOfLayers, layersSizes, activationFunctions, samples, lables):
-        # self.layers = numOfLayers
+    def __init__(self, inputSize, numOfLayers, layersSizes, samples, lables, weights = None):
+        self.numOfLayers = numOfLayers
         self.neurons = layersSizes
-        self.activation = activationFunctions
+        # self.activation = activationFunctions
         self.input = samples
         self.lables = lables
+        self.inputSize = inputSize
         
 
         self.recall = 0
         self.precision = 0
         self.fitness = 0
+
+        self.weights = weights
+        if weights == None:
+            self.initializeWeights()
         
     def initializeWeights(self):
         self.weights = []
         # self.bias = []
-        inputSize = len(self.input)
-        for i in range(self.layers):
-            self.weights.append(np.random.randn(inputSize, self.layersSizes[i]))
+        inputSize = self.inputSize
+        for i in range(self.numOfLayers):
+            self.weights.append(np.random.randn(inputSize, self.neurons[i]))
+            inputSize = self.neurons[i]
             # self.bias = 
 
+    def sigmoid(self, z):
+        return 1/(1+np.exp(-z))
+
+    def softmax(self, z):
+        return (np.exp(z)/np.exp(z).sum())
 
 
     def test(self):
-        TP = 0
-        FP = 0
-        FN = 0
+        true_positive_counter = 0
+        predicted_positive_counter = 0
+        actual_positive_counter = 0
         for i in range(len(self.input)):
             a = self.input[i]
-            for layer in range(len(self.weights)):
-                z = np.add(np.dot(a, self.weights[layer]))
-                a = sigmoid(z) 
+            for layer in range(self.numOfLayers):
+                z = np.dot(a, self.weights[layer])
+                a = self.sigmoid(z) 
             
-            y_hat = float(np.argmax(softmax(a)))
-            y_true = float(y[i])
+            y_hat = float(np.argmax(self.softmax(a)))
+            y_true = float(self.lables[i])
+
+            if y_hat == 1:
+                predicted_positive_counter += 1
+
+            if y_true == 1:
+                actual_positive_counter += 1
+
+            if y_hat == 1 and y_true == 1:
+                true_positive_counter += 1
+
+        recall = true_positive_counter / actual_positive_counter
+        if predicted_positive_counter == 0:
+           precision = 0
+        else: 
+            precision = true_positive_counter / predicted_positive_counter
+    
+        return recall, precision
+
 
     def calculateFitness(self):
 
