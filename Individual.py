@@ -1,7 +1,7 @@
 import numpy as np
 
 class NN:
-    def __init__(self, inputSize, numOfLayers, layersSizes, samples, lables, weights = None):
+    def __init__(self, inputSize, numOfLayers, layersSizes, samples, lables, weights = None, fitness=None):
         self.numOfLayers = numOfLayers
         self.neurons = layersSizes
         # self.activation = activationFunctions
@@ -17,6 +17,10 @@ class NN:
         self.weights = weights
         if weights == None:
             self.initializeWeights()
+        
+        self.fitness = fitness
+        if fitness == None:
+            self.calculateFitness()
         
     def initializeWeights(self):
         self.weights = []
@@ -56,20 +60,21 @@ class NN:
             if y_hat == 1 and y_true == 1:
                 true_positive_counter += 1
 
-        recall = true_positive_counter / actual_positive_counter
+        self.recall = true_positive_counter / actual_positive_counter
         if predicted_positive_counter == 0:
-           precision = 0
+           self.precision = 0
         else: 
-            precision = true_positive_counter / predicted_positive_counter
-    
-        return recall, precision
+            self.precision = true_positive_counter / predicted_positive_counter
+
+
+        
 
 
     def calculateFitness(self):
 
-        if self.recall+self.presicion > 0:
-            F1_score = (self.presicion * self.recall) / \
-                (self.presicion + self.recall)
+        if self.recall+self.precision > 0:
+            F1_score = (self.precision * self.recall) / \
+                (self.precision + self.recall)
             if F1_score > 0.3:
                 self.fitness = self.recall
             else:
