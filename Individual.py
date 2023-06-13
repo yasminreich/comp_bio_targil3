@@ -67,9 +67,6 @@ class NN:
             self.precision = true_positive_counter / predicted_positive_counter
 
 
-        
-
-
     def calculateFitness(self):
 
         if self.recall+self.precision > 0:
@@ -81,3 +78,8 @@ class NN:
                 self.fitness = self.recall/2
         else:
             self.fitness = self.recall
+
+    
+    def deepcopy(self):
+        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.layersSizes, self.samples, self.lables, self.weights, self.fitness)
+        return newPerson
