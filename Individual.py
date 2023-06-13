@@ -1,26 +1,26 @@
 import numpy as np
 
 class NN:
-    def __init__(self, inputSize, numOfLayers, layersSizes, samples, lables, weights = None, fitness=None):
+    def __init__(self, inputSize, F1Threshold, numOfLayers, layersSizes, samples, lables, weights = None, fitness=0):
         self.numOfLayers = numOfLayers
         self.neurons = layersSizes
         # self.activation = activationFunctions
         self.input = samples
         self.lables = lables
         self.inputSize = inputSize
-        
+        self.F1Threshold = F1Threshold
 
         self.recall = 0
         self.precision = 0
         self.fitness = 0
 
         self.weights = weights
-        if weights == None:
+        if weights is None:
             self.initializeWeights()
         
         self.fitness = fitness
-        if fitness == None:
-            self.calculateFitness()
+        # if fitness == None:
+        #     self.calculateFitness()
         
     def initializeWeights(self):
         self.weights = []
@@ -75,7 +75,7 @@ class NN:
         if self.recall+self.precision > 0:
             F1_score = (self.precision * self.recall) / \
                 (self.precision + self.recall)
-            if F1_score > 0.3:
+            if F1_score > self.F1Threshold:
                 self.fitness = self.recall
             else:
                 self.fitness = self.recall/2
