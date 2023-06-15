@@ -31,7 +31,6 @@ def crossover(individual1, individual2):
     random_number = random.randint(0, len(individual1.weights)-1)
     shape = individual1.weights[random_number].shape
     random_indices = tuple(np.random.randint(0, dim) for dim in shape)
-    print("the cut-off site: [{}][{}]".format(random_number, random_indices))
     weights1 = []
     weights2 = []
     if random_number > 0:
