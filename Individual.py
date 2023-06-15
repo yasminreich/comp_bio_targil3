@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 class NN:
     def __init__(self, inputSize, F1Threshold, numOfLayers, layersSizes, samples, lables, weights = None, fitness=0):
@@ -81,5 +82,5 @@ class NN:
 
     
     def deepcopy(self):
-        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.layersSizes, self.samples, self.lables, self.weights, self.fitness)
+        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.layersSizes, self.samples, self.lables, deepcopy(self.weights), self.fitness)
         return newPerson
