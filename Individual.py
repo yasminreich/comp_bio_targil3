@@ -13,6 +13,7 @@ class NN:
 
         self.recall = 0
         self.precision = 0
+
         self.fitness = 0
 
         self.weights = weights
@@ -82,5 +83,5 @@ class NN:
 
     
     def deepcopy(self):
-        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.layersSizes, self.samples, self.lables, deepcopy(self.weights), self.fitness)
+        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.neurons, self.input, self.lables, deepcopy(self.weights), self.fitness)
         return newPerson
