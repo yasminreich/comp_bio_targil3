@@ -1,22 +1,27 @@
 import numpy as np
+from copy import deepcopy
 
 class NN:
-    def __init__(self, inputSize, numOfLayers, layersSizes, samples, lables, weights = None):
+    def __init__(self, inputSize, F1Threshold, numOfLayers, layersSizes, samples, lables, weights = None, fitness=0):
         self.numOfLayers = numOfLayers
         self.neurons = layersSizes
         # self.activation = activationFunctions
         self.input = samples
         self.lables = lables
         self.inputSize = inputSize
-        
+        self.F1Threshold = F1Threshold
 
         self.recall = 0
         self.precision = 0
         self.fitness = 0
 
         self.weights = weights
-        if weights == None:
+        if weights is None:
             self.initializeWeights()
+        
+        self.fitness = fitness
+        # if fitness == None:
+        #     self.calculateFitness()
         
     def initializeWeights(self):
         self.weights = []
@@ -56,23 +61,26 @@ class NN:
             if y_hat == 1 and y_true == 1:
                 true_positive_counter += 1
 
-        recall = true_positive_counter / actual_positive_counter
+        self.recall = true_positive_counter / actual_positive_counter
         if predicted_positive_counter == 0:
-           precision = 0
+           self.precision = 0
         else: 
-            precision = true_positive_counter / predicted_positive_counter
-    
-        return recall, precision
+            self.precision = true_positive_counter / predicted_positive_counter
 
 
     def calculateFitness(self):
 
-        if self.recall+self.presicion > 0:
-            F1_score = (self.presicion * self.recall) / \
-                (self.presicion + self.recall)
-            if F1_score > 0.3:
+        if self.recall+self.precision > 0:
+            F1_score = (self.precision * self.recall) / \
+                (self.precision + self.recall)
+            if F1_score > self.F1Threshold:
                 self.fitness = self.recall
             else:
                 self.fitness = self.recall/2
         else:
             self.fitness = self.recall
+
+    
+    def deepcopy(self):
+        newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.layersSizes, self.samples, self.lables, deepcopy(self.weights), self.fitness)
+        return newPerson
