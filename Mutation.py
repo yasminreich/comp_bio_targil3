@@ -18,9 +18,10 @@ def help_crossover_arrays(array1, array2, random_indices):
     array2_crossover = array2.copy()
 
     # Perform crossover from the random indices till the end of the arrays
-    for index in random_indices:
-        array1_crossover[index:] = array2[index:]
-        array2_crossover[index:] = array1[index:]
+    array1_crossover[random_indices[0]][random_indices[1]:] = array2[random_indices[0]][random_indices[1]:]
+    array2_crossover[random_indices[0]][random_indices[1]:] = array1[random_indices[0]][random_indices[1]:]
+    array1_crossover[(random_indices[0]+1):] = array2[(random_indices[0]+1):]
+    array2_crossover[(random_indices[0]+1):] = array1[(random_indices[0]+1):]
 
     return array1_crossover, array2_crossover
 
