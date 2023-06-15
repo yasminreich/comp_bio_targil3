@@ -1,7 +1,5 @@
 import numpy as np
-import Individual
 import random
-import ReadData
 
 def mutate_individual(individual):
     random_number = random.randint(0, len(individual.weights)-1)
@@ -40,7 +38,6 @@ def crossover(individual1, individual2):
         for i in range(random_number):
             weights1.append(individual1.weights[i])
             weights2.append(individual2.weights[i])
-            print(":)")
     crossed_arr1, crossed_arr2 = help_crossover_arrays(individual1.weights[random_number], individual2.weights[random_number], random_indices)
     weights1.append(crossed_arr1)
     weights2.append(crossed_arr2)
@@ -48,11 +45,10 @@ def crossover(individual1, individual2):
         for j in range(random_number+1, len(individual1.weights)):
             weights1.append(individual2.weights[j])
             weights2.append(individual1.weights[j])
-            print(":(")
     child1.weights, child2.weights = weights1, weights2
     return child1, child2
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
     train_data, train_labels = ReadData.read_data("nn0.txt")
     indi1 = Individual.NN(16, 2, [2, 3], train_data, train_labels)
     indi2 = Individual.NN(16, 2, [2, 3], train_data, train_labels)
@@ -64,4 +60,4 @@ if __name__ == '__main__':
     print("child1 weights: ")
     print(child1.weights)
     print("child2 weights: ")
-    print(child2.weights)
+    print(child2.weights)"""
