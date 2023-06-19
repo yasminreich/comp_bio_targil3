@@ -5,7 +5,6 @@ import math, os
 import random, json
 from sklearn.model_selection import train_test_split
 from collections import deque
-import multiprocessing
 
 
 class Population:
@@ -35,10 +34,8 @@ class Population:
 
     def runTrain(self):
 
-
         for p in self.population:
             p.train()
-            p.calculateFitness()
 
     def dispachBestPeople(self, bestPeople):
 
@@ -107,13 +104,6 @@ class Population:
             if random.random() < mutationChance:
                 Mutation.mutate_individual(person)
 
-
-# Define a top-level function outside the class
-def train_and_calculate_fitness(p):
-    p.train()
-    # p.calculateFitness()
-
-
 def read_data(file_path):
     samples = []
     labels = []
@@ -155,7 +145,7 @@ def main():
 
 
 
-    data, labels = read_data("nn1.txt")
+    data, labels = read_data("nn0.txt")
 
     train_data, test_data, train_labels, test_labels = train_test_split(
         data, labels, test_size=0.2, random_state=42)
