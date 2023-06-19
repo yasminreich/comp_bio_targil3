@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score
 
 
 class NN:
-    def __init__(self, inputSize, F1Threshold, numOfLayers, layersSizes, samples, lables, weights=None, fitness=0, recall=0, precision=0):
+    def __init__(self, inputSize, F1Threshold, numOfLayers, layersSizes, samples, lables, weights=None, fitness=0, recall=0, precision=0, accuray=0):
         self.numOfLayers = numOfLayers
         self.neurons = layersSizes
         # self.activation = activationFunctions
@@ -16,7 +16,7 @@ class NN:
         self.recall = recall
         self.precision = precision
 
-        self.fitness = 0
+        self.accuracy = accuray
 
         self.weights = weights
         if weights is None:
@@ -114,5 +114,5 @@ class NN:
 
     def deepcopy(self):
         newPerson = NN(self.inputSize, self.F1Threshold, self.numOfLayers, self.neurons, self.input, self.lables,
-                       deepcopy(self.weights), self.fitness, self.recall, self.precision)
+                       deepcopy(self.weights), self.fitness, self.recall, self.precision, self.accuracy)
         return newPerson
