@@ -40,18 +40,31 @@ class NN:
     def softmax(self, z):
         return (np.exp(z)/np.exp(z).sum())
 
+    # def train(self):
+    #     y_hat = []
+    #     for i in range(self.input.shape[0]):
+    #         a = self.input[i].reshape(1,self.inputSize)
+    #         for layer in range(self.numOfLayers):
+    #             z = np.dot(a, self.weights[layer])
+    #             a = self.sigmoid(z)
+    #         y_hat.append(float(np.argmax(self.softmax(a))))
+
+    #     self.calculate_metrics(np.array(y_hat))
+
+
     def train(self):
-        y_hat = []
-        for i in range(self.input.shape[0]):
-            a = self.input[i].reshape(1,self.inputSize)
-            for layer in range(self.numOfLayers):
-                z = np.dot(a, self.weights[layer])
-                a = self.sigmoid(z)
-            y_hat.append(float(np.argmax(self.softmax(a))))
-
-        # y_hat = np.round(a.transpose())
-
-        self.calculate_metrics(np.array(y_hat))
+        a = self.input.reshape(self.input.shape[0], 1, self.inputSize)
+        for layer in range(self.numOfLayers):
+            z = np.dot(a, self.weights[layer])
+            a = self.sigmoid(z)
+        
+        # Flatten the output array
+        a = a.reshape(a.shape[0], -1)
+        
+        # Calculate y_hat for all samples
+        y_hat = np.argmax(self.softmax(a), axis=1)
+        
+        self.calculate_metrics(y_hat)
 
     def calculate_metrics(self, predictions):
 

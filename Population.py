@@ -2,7 +2,7 @@ import Individual
 import Mutation
 import numpy as np
 import math
-import random
+import random, json
 from sklearn.model_selection import train_test_split
 from collections import deque
 import multiprocessing
@@ -12,8 +12,11 @@ class Population:
     def __init__(self, train_data, train_labels, size, F1Threshold):
         self.size = size
         self.population = []
-        self.numOfLayers = 6
-        self.layersSizes = [16, 32, 128, 32, 16, 2]
+        self.numOfLayers = 4
+        self.layersSizes = [6, 8, 8, 2]
+        self.numOfLayers = 2
+        self.layersSizes = [8, 2]
+
         self.train_data = train_data
         self.train_labels = train_labels
         self.F1Threshold = F1Threshold
@@ -32,15 +35,11 @@ class Population:
     #     p.calculateFitness()
 
     def runTrain(self):
-        pool = multiprocessing.Pool()
-        pool.map(train_and_calculate_fitness, self.population)
-        # pool.close()
-        pool.join()
-        pool.close()
 
-        # for p in self.population:
-        #     p.train()
-        #     p.calculateFitness()
+
+        for p in self.population:
+            p.train()
+            p.calculateFitness()
 
     def dispachBestPeople(self, bestPeople):
 
@@ -67,12 +66,21 @@ class Population:
 
     def nextGen(self, deathThreshold, mutationChance):
         self.runTrain()
-        self.population = sorted(
-            self.population, key=lambda p: p.fitness, reverse=True)
-
-        self.bestPerson = self.population[0]
+        self.population = sorted(self.population, key=lambda p: p.fitness, reverse=True)
         self.__naturalSelection(deathThreshold)
 
+
+        # lamark
+        for person in self.population:
+            newPerson = person.deepcopy()
+            for i in range(3):
+                Mutation.mutate_individual(newPerson)
+            newPerson.train()
+
+            if newPerson.fitness > person.fitness:
+                person.fitness = newPerson.deepcopy()
+
+        self.bestPerson = self.population[0]
         newPopulation = self.dispachBestPeople(self.population[:5])
 
         popForCros = []
@@ -84,7 +92,7 @@ class Population:
 
         while True:
             # print("in crossover in next gen")
-            print(len(newPopulation))
+            # print(len(newPopulation))
             parent1, parent2 = random.sample(popForCros, 2)
             child1, child2 = Mutation.crossover(parent1, parent2)
             newPopulation.append(child1)
@@ -124,19 +132,33 @@ def read_data(file_path):
 
     return np.array(samples), np.array(labels)
 
+# function to add to JSON
+def write_json(new_data, filename='results.json'):
+    with open(filename,'r+') as file:
+          # First we load existing data into a dict.
+        file_data = json.load(file)
+        # Join new_data with file_data inside emp_details
+        file_data["emp_details"].append(new_data)
+        # Sets file's current position at offset.
+        file.seek(0)
+        # convert back to json.
+        json.dump(file_data, file, indent = 4)
 
 def main():
+
+
 
     data, labels = read_data("nn0.txt")
 
     train_data, test_data, train_labels, test_labels = train_test_split(
         data, labels, test_size=0.2, random_state=42)
 
-    popy = Population(train_data, train_labels, size=60, F1Threshold=0.3)
-    deathThreshold = 0.4
+    popSize = 200
+
+    popy = Population(train_data, train_labels, size=popSize, F1Threshold=0.3)
+    deathThreshold = 0.6
     mutationChance = 0.8
     convergenceMax = 10
-    convergenceCount = 0
     generationCounter = 0
     fitQueue = deque(maxlen=convergenceMax)
     epsilon = 0.001
@@ -150,7 +172,7 @@ def main():
         print("best person fitness:", float(popy.bestPerson.fitness))
         print("best person accuracy:", float(popy.bestPerson.accuracy))
         if len(fitQueue) == convergenceMax:
-            if popy.bestPerson.fitness - fitQueue[0] < epsilon:
+            if popy.bestPerson.accuracy - fitQueue[0] < epsilon:
                 break
 
         # if popy.bestPerson.fitness == lastBestFit:
@@ -159,8 +181,15 @@ def main():
         #     convergenceCount = 0
         # lastBestFit = popy.bestPerson.fitness
 
+
     print(popy.bestPerson.test(test_data, test_labels))
 
+    result = {"deathThreshold":deathThreshold,  "mutationChance":mutationChance,\
+         "layers": popy.layersSizes, "train accuracy": popy.bestPerson.accuracy,\
+             "test accuracy": popy.bestPerson.test(test_data, test_labels), \
+                 "num of gen": generationCounter, "epsilon":0.001, "max gen": maxGen}
+
+    write_json(result)
 
 if __name__ == "__main__":
     main()
