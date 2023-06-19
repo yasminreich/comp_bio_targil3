@@ -21,6 +21,26 @@ def read_data(file_path):
 
     return np.array(samples), np.array(labels)
 
+# # function to add to JSON
+# def write_json(new_data, filename='results.json'):
+
+#     # Check if the file exists
+#     if os.path.exists(filename):
+#         # File exists, so load its contents
+#         with open(filename, "r") as file:
+#             results = json.load(file)
+#     else:
+#     # File doesn't exist, create an empty data structure
+#         results = []
+
+#     # Update the existing data structure
+#     results.append(new_data)
+
+#     # Save the updated data back to the file
+#     with open(filename, "w") as file:
+#         json.dump(results, file)
+
+
 def main(train_path, test_path):
 
     train_data, train_labels = read_data(train_path)
@@ -56,8 +76,8 @@ def main(train_path, test_path):
         test_accuracy = np.mean(popy.bestPerson.test(test_data) == test_labels)
         if test_accuracy > 0.98:
             break
-
-    popy.bestPerson.save("wnet0.txt")
+        
+    popy.bestPerson.save("wnet1.txt")
 
 if __name__ == "__main__":
 

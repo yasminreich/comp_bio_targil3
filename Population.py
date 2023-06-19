@@ -1,30 +1,27 @@
 import Individual
 import Mutation
-import numpy as np
-import math, os
-import random, json
-from sklearn.model_selection import train_test_split
-from collections import deque
+import math
+import random
+
 
 
 class Population:
-    def __init__(self, train_data, train_labels, size, F1Threshold):
+    def __init__(self, train_data, train_labels, size, layersSizes):
         self.size = size
         self.population = []
         
-        self.layersSizes = [4,2]
+        self.layersSizes = layersSizes
         self.numOfLayers = len(self.layersSizes)
 
         self.train_data = train_data
         self.train_labels = train_labels
-        self.F1Threshold = F1Threshold
 
         self.__createInitialPop()
 
     def __createInitialPop(self):
         inputSize = self.train_data.shape[1]
         for i in range(self.size):
-            nn = Individual.NN(inputSize, self.F1Threshold, self.numOfLayers,
+            nn = Individual.NN(inputSize, self.numOfLayers,
                                self.layersSizes, self.train_data, self.train_labels)
             self.population.append(nn)
 
@@ -104,81 +101,3 @@ class Population:
             if random.random() < mutationChance:
                 Mutation.mutate_individual(person)
 
-def read_data(file_path):
-    samples = []
-    labels = []
-
-    with open(file_path, 'r') as file:
-        for line in file:
-            data = line.strip().split('   ')
-            if len(data) >= 2:
-                sample = [int(bit) for bit in data[0].strip() if bit.isdigit()]
-                label = int(data[1])
-
-                # samples.append(np.array(sample).reshape(1, len(sample)))
-                samples.append(np.array(sample))
-                labels.append(label)
-
-    return np.array(samples), np.array(labels)
-
-# function to add to JSON
-def write_json(new_data, filename='results.json'):
-
-    # Check if the file exists
-    if os.path.exists(filename):
-        # File exists, so load its contents
-        with open(filename, "r") as file:
-            results = json.load(file)
-    else:
-    # File doesn't exist, create an empty data structure
-        results = []
-
-    # Update the existing data structure
-    results.append(new_data)
-
-    # Save the updated data back to the file
-    with open(filename, "w") as file:
-        json.dump(results, file)
-
-
-def main():
-
-
-
-    data, labels = read_data("nn0.txt")
-
-    train_data, test_data, train_labels, test_labels = train_test_split(
-        data, labels, test_size=0.2, random_state=42)
-
-    popSize = 200
-
-    popy = Population(train_data, train_labels, size=popSize, F1Threshold=0.3)
-    deathThreshold = 0.8
-    mutationChance = 0.8
-    convergenceMax = 10
-    generationCounter = 0
-    fitQueue = deque(maxlen=convergenceMax)
-    epsilon = 0.0001
-    maxGen = 300
-    while generationCounter < maxGen:
-        generationCounter += 1
-
-        popy.nextGen(deathThreshold=deathThreshold,
-                     mutationChance=mutationChance)
-        fitQueue.append(popy.bestPerson.accuracy)
-        print("best person accuracy:", float(popy.bestPerson.accuracy))
-        if len(fitQueue) == convergenceMax:
-            if abs(popy.bestPerson.accuracy - fitQueue[0]) <= epsilon:
-                break
-
-    print(popy.bestPerson.test(test_data, test_labels))
-
-    result = {"deathThreshold":deathThreshold,  "mutationChance":mutationChance,\
-         "layers": popy.layersSizes, "train accuracy": popy.bestPerson.accuracy,\
-             "test accuracy": popy.bestPerson.test(test_data, test_labels), \
-                 "num of gen": generationCounter, "epsilon":epsilon, "max gen": maxGen}
-
-    write_json(result)
-
-if __name__ == "__main__":
-    main()
