@@ -1,15 +1,16 @@
 import numpy as np
 import random
 
+#pick a random weight and mutate it
 def mutate_individual(individual):
     random_number = random.randint(0, len(individual.weights)-1)
     shape = individual.weights[random_number].shape
     random_indices = tuple(np.random.randint(0, dim) for dim in shape)
-    # print("the mutation site: [{}][{}]".format(random_number, random_indices))
     individual.weights[random_number][random_indices] += np.random.randn()
             
     return individual
 
+#gets two arrays and the cut-off place, and cross over the two arrays
 def help_crossover_arrays(array1, array2, random_indices):
     # Create copies of the input arrays to avoid modifying them directly
     array1_crossover = array1.copy()
@@ -23,6 +24,7 @@ def help_crossover_arrays(array1, array2, random_indices):
 
     return array1_crossover, array2_crossover
 
+#gets two individuals and return the cross-over cildren
 def crossover(individual1, individual2):
     # Create copies of the parents to preserve their original values
     child1 = individual1.deepcopy()
@@ -37,6 +39,7 @@ def crossover(individual1, individual2):
         for i in range(random_number):
             weights1.append(individual1.weights[i])
             weights2.append(individual2.weights[i])
+    #get the crossed over weights for the childern
     crossed_arr1, crossed_arr2 = help_crossover_arrays(individual1.weights[random_number], individual2.weights[random_number], random_indices)
     weights1.append(crossed_arr1)
     weights2.append(crossed_arr2)
@@ -46,17 +49,3 @@ def crossover(individual1, individual2):
             weights2.append(individual1.weights[j])
     child1.weights, child2.weights = weights1, weights2
     return child1, child2
-
-"""if __name__ == '__main__':
-    train_data, train_labels = ReadData.read_data("nn0.txt")
-    indi1 = Individual.NN(16, 2, [2, 3], train_data, train_labels)
-    indi2 = Individual.NN(16, 2, [2, 3], train_data, train_labels)
-    print("indi1 weights: ")
-    print(indi1.weights)
-    print("indi2 weights: ")
-    print(indi2.weights)
-    child1, child2 = crossover(indi1, indi2)
-    print("child1 weights: ")
-    print(child1.weights)
-    print("child2 weights: ")
-    print(child2.weights)"""

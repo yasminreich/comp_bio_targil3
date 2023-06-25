@@ -1,7 +1,7 @@
 import sys, pickle
 import numpy as np
 
-
+#read the file of test samples into a numpy array
 def read_data(file_path):
     samples = []
 
@@ -16,12 +16,13 @@ def read_data(file_path):
 
     return np.array(samples)
 
+#load the neural network in pickel form
 @staticmethod
 def load(filename):
     with open(filename, "rb") as file:
         nn = pickle.load(file)
     return nn
-
+#run the neural network on the new samples and write the labels in to the predictions file
 def main(wnet_path, data_path):
     nn = load(wnet_path)
     samples = read_data(data_path)
