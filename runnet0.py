@@ -7,9 +7,8 @@ def read_data(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             data = line.strip().split('   ')
-            if len(data) >= 2:
-                sample = [int(bit) for bit in data[0].strip() if bit.isdigit()]
-                samples.append(np.array(sample))
+            sample = [int(bit) for bit in data[0].strip() if bit.isdigit()]
+            samples.append(np.array(sample))
 
     return np.array(samples)
 
@@ -19,6 +18,8 @@ def load(filename):
     with open(filename, "rb") as file:
         nn = pickle.load(file)
     return nn
+
+
 #run the neural network on the new samples and write the labels in to the predictions file
 def main(wnet_path, data_path):
     nn = load(wnet_path)

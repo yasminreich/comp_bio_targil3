@@ -8,11 +8,10 @@ def read_data(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             data = line.strip().split('   ')
-            if len(data) >= 2:
-                sample = [int(bit) for bit in data[0].strip() if bit.isdigit()]
+            sample = [int(bit) for bit in data[0].strip() if bit.isdigit()]
 
-                # samples.append(np.array(sample).reshape(1, len(sample)))
-                samples.append(np.array(sample))
+            # samples.append(np.array(sample).reshape(1, len(sample)))
+            samples.append(np.array(sample))
 
     return np.array(samples)
 
